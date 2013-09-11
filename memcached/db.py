@@ -2,50 +2,58 @@ import MySQLdb
 import string
 import random
 
-def clean(cursor):
-    sql = "TRUNCATE test"
-    cursor.execute(sql)
 
-def get(cursor, key):
-    sql = "SELECT name, value FROM test WHERE name='%s'" % key
-    cursor.execute(sql)
-    numrows = int(cursor.rowcount)
-    for x in range(numrows):
-        row = cursor.fetchone()
-        print row[0], "-->", row[1]
+class Db(object):
 
-def put(conn, cursor, key, value):
-    sql = "INSERT INTO test (name, value) VALUES ('%s', '%s')" % (key, value)
-    try:
-        cursor.execute(sql)
-        conn.commit()
-    except MySQLdb.Error as e:
-        print e
-        return False
-    return True
+    def __init__(self):
+        self.conn = MySQLdb.connect('localhost', 'root',
+                                    'cs423', 'cs423_restful')
+        self.cursor = self.conn.cursor()
 
+    def clean(self):
+        sql = "TRUNCATE test"
+        self.cursor.execute(sql)
 
-def string_generator(size):
-    chars = string.ascii_uppercase + string.digits
-    return ''.join(random.choice(chars) for x in range(size))
+    def get(self, key):
+        sql = "SELECT name, value FROM test WHERE name='%s'" % key
+        self.cursor.execute(sql)
+        numrows = int(self.cursor.rowcount)
+        if numrows:
+            row = self.cursor.fetchone()
+            print row[0], "-->", row[1]
 
+    def put(self, key, value):
+        sql = "INSERT INTO test (name, value) VALUES ('%s', '%s')" % (key, value)
+        print sql
+        try:
+            self.cursor.execute(sql)
+            self.conn.commit()
+        except MySQLdb.Error as e:
+            print e
+            return False
+        return True
 
-def random_insert(conn, cursor):
-    clean(cursor)
-    for num in range(1000):
-        name = "KEY_" + str(num)
-        value = string_generator(300)
-        put(conn, cursor, name, value)
+    def string_generator(self, size):
+        chars = string.ascii_uppercase + string.digits
+        return ''.join(random.choice(chars) for x in range(size))
 
-def random_read(cursor):
-    for i in range(100):
-        name = "KEY_" + str(random.randrange(0, 1000))
-        get(cursor, name)
+    def random_insert(self):
+        self.clean()
+        for num in range(1000):
+            name = "KEY_" + str(num)
+            value = self.string_generator(300)
+            self.put(name, value)
+
+    def random_read(self):
+        for i in range(100):
+            name = "KEY_" + str(random.randrange(0, 1000))
+            self.get(name)
+
+    def __del__(self):
+        self.cursor.close()
+        self.conn.close()
 
 if __name__ == "__main__":
-    conn = MySQLdb.connect(host='localhost', user='root', passwd='cs423', db='cs423_restful')
-    cursor = conn.cursor()
-    # random_insert(conn, cursor)
-    random_read(cursor)
-    cursor.close()
-    conn.close()
+    db = Db()
+    # db.random_insert()
+    db.random_read()
