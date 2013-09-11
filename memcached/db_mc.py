@@ -2,6 +2,7 @@ import MySQLdb
 import pylibmc
 import string
 import random
+import time
 
 
 class Db(object):
@@ -60,7 +61,7 @@ class Db(object):
         for i in range(100):
             name = "KEY_" + str(random.randrange(0, 1000))
             r = self.get(name)
-            print r if r else ""
+            # print r if r else ""
 
     def __del__(self):
         self.cursor.close()
@@ -68,5 +69,7 @@ class Db(object):
 
 if __name__ == "__main__":
     db = Db()
-    # db.random_insert()
+    start_time = time.time()
     db.random_read()
+    end_time = time.time()
+    print "Time used: ", end_time - start_time
