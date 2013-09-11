@@ -23,7 +23,8 @@ class Db(object):
             print row[0], "-->", row[1]
 
     def put(self, key, value):
-        sql = "INSERT INTO test (name, value) VALUES ('%s', '%s')" % (key, value)
+        sql = "INSERT INTO test (name, value) VALUES ('%s', '%s')" \
+            % (key, value)
         print sql
         try:
             self.cursor.execute(sql)
