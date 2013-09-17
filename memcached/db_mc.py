@@ -20,6 +20,9 @@ class Db(object):
         sql = "TRUNCATE test"
         self.cursor.execute(sql)
 
+    def flush_memcache(self):
+        self.mc.flush_all()
+
     def get(self, key):
         if key in self.mc:
             return key + "-->" + self.mc[key]
@@ -69,6 +72,7 @@ class Db(object):
 
 if __name__ == "__main__":
     db = Db()
+    # db.flush_memcache()
     start_time = time.time()
     db.random_read()
     end_time = time.time()
