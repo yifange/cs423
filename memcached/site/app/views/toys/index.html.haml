@@ -2,9 +2,9 @@
   - (1..100).each do 
     - ind = rand(1..1000)
     - key = "KEY_#{ind}"
-    - value = Toy.where(:key => key).value
+    - value = Rails.cache.fetch(key) { Toy.find_by(:key => key).value }
     %tr
+      %td{:style => "font-weight: bold;"}
+        = key
       %td
-        key
-      %td
-        value
+        = value
