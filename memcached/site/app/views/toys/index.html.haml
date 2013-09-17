@@ -1,0 +1,10 @@
+%table
+  - (1..100).each do 
+    - ind = rand(1..1000)
+    - key = "KEY_#{ind}"
+    - value = Toy.where(:key => key).value
+    %tr
+      %td
+        key
+      %td
+        value

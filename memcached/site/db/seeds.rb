@@ -1,7 +1,7 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+Toy.delete_all
+(1..1000).each do |i|
+  key = "KEY_#{i}"
+  value = (0..300).map{('A'..'z').to_a[rand(58)]}.join
+  puts key + "->" + value
+  Toy.create(:key => "KEY_#{i}", :value => value)
+end
